@@ -1,0 +1,4 @@
+body { background: #f0f0f0; font-family: sans-serif; }
+#terminal-container { background: #1e1e1e; color: #0f0; padding: 15px; height: 80vh; overflow-y: auto; font-family: monospace; }
+.input-line { display: flex; }
+#cmd-input { background: transparent; border: none; color: #fff; flex: 1; outline: none; }

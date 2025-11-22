@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width:800px; margin: 40px auto;">
+    <h1>Доступные лабораторные работы</h1>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+        {% for lab in labs %}
+        <!-- ДОБАВЛЕНО: position: relative (чтобы кнопка позиционировалась относительно карточки) -->
+        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: relative;">
+            
+            <!-- ВСТАВИТЬ СЮДА: Кнопка редактирования (только для персонала) -->
+            {% if user.is_staff %}
+            <a href="{% url 'edit_lab' lab.id %}" 
+               style="position:absolute; top:15px; right:15px; text-decoration:none; font-size:18px; opacity: 0.6;"
+               title="Редактировать задание">
+               ✏️
+            </a>
+            {% endif %}
+
+            <!-- Заголовок с отступом справа, чтобы не наехать на кнопку -->
+            <h3 style="margin-top:0; padding-right: 30px;">{{ lab.title }}</h3>
+            
+            <!-- Описание с фильтром striptags (убирает HTML теги для превью) -->
+            <p style="color: #666; font-size: 0.9em;">{{ lab.description|striptags|truncatewords:30 }}</p>
+            
+            <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+                {% if lab.id in active_sessions %}
+                    <span style="color: orange; font-weight: bold; font-size: 0.8em;">● In Progress</span>
+                    <a href="{% url 'start_lab' lab.id %}" style="text-decoration:none; color:white; background:orange; padding:8px 16px; border-radius:4px;">Resume</a>
+                {% else %}
+                    <span></span>
+                    <a href="{% url 'start_lab' lab.id %}" style="text-decoration:none; color:white; background:#00bceb; padding:8px 16px; border-radius:4px;">Start</a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+            <p>Нет доступных заданий.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

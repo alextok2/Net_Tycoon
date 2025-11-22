@@ -1,0 +1,21 @@
+.section { margin-bottom: 15px; }
+label { display: block; font-weight: bold; margin-bottom: 5px; }
+.form-control { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; }
+
+/* Таблицы */
+.builder-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+.builder-table th, .builder-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+.builder-table th { background: #f4f4f4; }
+
+/* Кнопки */
+.btn-add { background: #28a745; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; }
+.btn-save { background: #007bff; color: white; border: none; padding: 12px 24px; cursor: pointer; border-radius: 4px; font-size: 16px; }
+.btn-del { background: #dc3545; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; }
+.btn-edit { background: #ffc107; color: #212529; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; margin-right: 5px; }
+.btn-edit:hover { background: #e0a800; }
+
+/* Блок конструктора */
+.criteria-builder { background: #f8f9fa; padding: 15px; border-radius: 5px; border: 1px solid #ddd; }
+
+/* Скрытые поля JSON (Django form widgets) */
+textarea[style*="display:none"] { display: none !important; }

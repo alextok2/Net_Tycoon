@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>LearnMachine Network</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background: #f4f4f9; }
+        nav { background: #333; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        nav a { color: white; text-decoration: none; margin-left: 15px; }
+        .btn { padding: 5px 10px; background: #00bceb; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div style="font-weight:bold; font-size:1.2em;">LearnMachine 🚀</div>
+        <div>
+            {% if user.is_authenticated %}
+                <span>Привет, {{ user.username }}</span>
+                <a href="{% url 'lab_list' %}">Labs</a>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" style="background:none; border:none; color:#aaa; cursor:pointer;">Выход</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Войти</a>
+            {% endif %}
+        </div>
+    </nav>
+    
+    {% block content %}{% endblock %}
+</body>
+</html>

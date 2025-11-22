@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/edit_lab.css' %}">
+
+<div style="max-width: 1200px; margin: 20px auto; padding: 20px; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2>Редактирование: {{ lab.title }}</h2>
+        <a href="{% url 'lab_list' %}" style="padding:8px 15px; background:#666; color:white; text-decoration:none; border-radius:4px;">Отмена</a>
+    </div>
+
+    <form method="post" id="labForm">
+        {% csrf_token %}
+        
+        <!-- 1. Основное -->
+        <div class="section">
+            <label>Название</label>
+            {{ form.title }}
+        </div>
+        
+        <div class="section">
+            <label>Описание задания (HTML)</label>
+            {{ form.description }}
+        </div>
+
+        <!-- СКРЫТЫЕ ПОЛЯ (Заполняются JS) -->
+        {{ form.topology_data }}
+        {{ form.allowed_devices }}
+        {{ form.success_criteria }}
+
+        <hr>
+
+        <!-- 2. Конструктор Топологии -->
+        <h3>1. Устройства (Topology)</h3>
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <input type="text" id="newDevName" placeholder="Имя (напр. R1)" style="padding:5px;">
+            <select id="newDevType" style="padding:5px;">
+                <option value="router">Router</option>
+                <option value="switch">Switch</option>
+            </select>
+            <input type="text" id="newDevIp" placeholder="IP (для схемы)" style="padding:5px;">
+            <button type="button" onclick="window.labEditor.addDevice()" class="btn-add">+ Добавить устройство</button>
+        </div>
+
+        <table class="builder-table" id="devicesTable">
+            <thead><tr><th>ID</th><th>Тип</th><th>IP (Label)</th><th>Действие</th></tr></thead>
+            <tbody><!-- JS rows here --></tbody>
+        </table>
+
+        <hr>
+
+        <!-- 3. Конструктор Проверок -->
+        <h3>2. Критерии успеха (Checklist)</h3>
+        
+        <div class="criteria-builder">
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap: wrap;">
+                <div style="display:flex; flex-direction: column;">
+                    <small style="color:#666">Устройство</small>
+                    <select id="critDevice" style="padding:6px;" onchange="window.labEditor.updateInterfaceList()"></select> 
+                </div>
+
+                <div style="display:flex; flex-direction: column;">
+                    <small style="color:#666">Тип проверки</small>
+                    <select id="critType" style="padding:6px;" onchange="window.labEditor.toggleCritInputs()">
+                        <option value="hostname">Hostname</option>
+                        <option value="desc">Interface Description</option>
+                        <option value="ip">Interface IP</option>
+                    </select>
+                </div>
+
+                <div style="display:flex; flex-direction: column;">
+                    <small style="color:#666">Интерфейс</small>
+                    <select id="critIfaceSelect" style="padding:6px; display:none; min-width: 120px;"></select>
+                </div>
+                
+                <div style="flex:1; display:flex; flex-direction: column;">
+                    <small style="color:#666">Ожидаемое значение</small>
+                    <input type="text" id="critValue" placeholder="Значение" style="padding:6px;">
+                </div>
+                
+                <div style="display:flex; align-items: flex-end; gap: 5px;">
+                    <button type="button" id="btnAddCrit" onclick="window.labEditor.addOrUpdateCriteria()" class="btn-add" style="height: 32px;">+ Добавить</button>
+                    <button type="button" id="btnCancelCrit" onclick="window.labEditor.resetCritForm()" class="btn-del" style="height: 32px; display:none; background: #6c757d;">Отмена</button>
+                </div>
+            </div>
+        </div>
+
+        <table class="builder-table" id="criteriaTable">
+            <thead><tr><th>Устройство</th><th>Параметр</th><th>Детали</th><th>Ожидается</th><th>Действия</th></tr></thead>
+            <tbody><!-- JS rows here --></tbody>
+        </table>
+
+        <div style="margin-top:30px; border-top:1px solid #eee; padding-top:20px;">
+            <button type="button" onclick="window.labEditor.submitBuilder()" class="btn-save">Сохранить Лабораторную</button>
+        </div>
+    </form>
+</div>
+
+<script src="{% static 'js/edit_lab.js' %}"></script>
+{% endblock %}

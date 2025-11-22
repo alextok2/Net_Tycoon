@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab: Site-to-Site VPN</title>
+    <link rel="stylesheet" href="{% static 'css/lab.css' %}">
+</head>
+<body>
+
+    <!-- ПЕРЕДАЧА ДАННЫХ ИЗ DJANGO В JS -->
+    <!-- Эти данные будут доступны в JS через document.getElementById('...').textContent -->
+    {{ session.id|json_script:"session-id" }}
+    {{ device_hostnames_json|json_script:"hostnames-data" }}
+    {{ initial_logs_json|json_script:"initial-logs-data" }}
+    {{ session.current_device|json_script:"current-device-id" }}
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div style="padding: 10px; border-bottom: 1px solid #ddd; display:flex; justify-content:space-between; align-items:center;">
+            <a href="{% url 'lab_list' %}" style="text-decoration:none; color:#333;">&larr; Back</a>
+            <a href="{% url 'reset_lab' session.id %}" class="btn-reset" onclick="return confirm('Reset Device?');">Reset ↻</a>
+        </div>
+
+        <div class="topology-view">
+            <!-- СТАТУС С ПРОВЕРКОЙ -->
+            <div style="position: absolute; top:10px; left:10px; font-weight:bold;color:{% if is_completed %}green{% else %}#555{% endif %};" 
+                 id="lab-status">
+                {% if is_completed %}
+                    DONE ✅
+                {% else %}
+                    IN PROGRESS
+                {% endif %}
+            </div>
+            
+            
+            <div style="display:flex; width:100%; justify-content:space-around; align-items:center; position:relative;">
+                <div class="link-line"></div>
+                
+                <!-- R1 -->
+                <div class="node-wrapper" id="node-R1" onclick="lab.switchDevice('R1')">
+                    <div class="router">
+                        <div class="top"><div class="router-arrow"></div><div class="router-arrow"></div><div class="router-arrow"></div><div class="router-arrow"></div></div>
+                        <div class="body"></div>
+                    </div>
+                    <div class="node-labels">
+                        <div class="device-name" id="label-R1">R1</div>
+                        <div class="device-ip">1.1.1.1</div>
+                    </div>
+                </div>
+
+                <div class="cloud">INTERNET</div>
+
+                <!-- R2 -->
+                <div class="node-wrapper" id="node-R2" onclick="lab.switchDevice('R2')">
+                    <div class="l3-switch">
+                        <div class="face-front">
+                            <div class="l3-center-dot"></div>
+                            <div class="l3-arrow"></div><div class="l3-arrow"></div><div class="l3-arrow"></div><div class="l3-arrow"></div>
+                            <div class="l3-arrow diag"></div><div class="l3-arrow diag"></div><div class="l3-arrow diag"></div><div class="l3-arrow diag"></div>
+                        </div>
+                    </div>
+                    <div class="node-labels">
+                        <div class="device-name" id="label-R2">R2</div>
+                        <div class="device-ip">2.2.2.2</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-tabs">
+            <div class="info-tab active" onclick="lab.switchInfoTab('task')">Task</div>
+            <div class="info-tab" onclick="lab.switchInfoTab('theory')">Theory</div>
+        </div>
+        <div id="tab-task" class="content-area">
+            {{ lab.description|safe }}
+            {% if not lab.description %}<h4>No description.</h4>{% endif %}
+        </div>
+        <div id="tab-theory" class="content-area hidden">
+            <pre>crypto isakmp policy 10...</pre>
+        </div>
+    </div>
+
+    <!-- TERMINAL -->
+    <div class="right-panel">
+        <div class="console-tabs">
+            {% for dev in lab.allowed_devices %}
+                <div class="device-tab {% if session.current_device == dev %}active{% endif %}" 
+                     id="tab-{{ dev }}"
+                     onclick="lab.switchDevice('{{ dev }}')">
+                    {{ dev }}
+                </div>
+            {% empty %}
+                <div class="device-tab active" id="tab-R1">R1</div>
+            {% endfor %}
+        </div>
+
+        <div class="terminal-wrapper" id="terminal-wrapper">
+            <div id="terminal-output">
+                <div class="log-line">System Bootstrap...</div>
+                <div class="input-line" id="active-input-line">
+                    <span id="prompt">{{ initial_prompt }}</span>
+                    <!-- Сюда JS вставит курсор и текст -->
+                </div>
+            </div>
+            <input type="text" id="cmd-input" autocomplete="off" spellcheck="false">
+        </div>
+    </div>
+
+    <!-- LOGIC -->
+    <script src="{% static 'js/lab.js' %}"></script>
+</body>
+</html>
