@@ -816,14 +816,14 @@ class IOSCommandProcessor:
         user_data = self.session.virtual_config
 
         for dev_id, requirements in criteria.items():
+            # ... (код проверки критериев остается тем же) ...
             dev_config = user_data.get(dev_id, {}).get("config", {})
             
-            # 1. Hostname (Сравниваем без учета регистра)
+            # 1. Проверка Hostname
             req_hostname = requirements.get("hostname")
             if req_hostname:
                 curr_hostname = dev_config.get("hostname", "")
                 if curr_hostname.lower() != req_hostname.lower():
-                    print(f"[CHECK FAIL] {dev_id} Hostname: Got '{curr_hostname}', Expected '{req_hostname}'")
                     return False
 
             # 2. Config Checks
@@ -832,12 +832,9 @@ class IOSCommandProcessor:
                 path = check.get("path", [])
                 expected_value = str(check.get("value", "")).strip()
                 
-                # Ищем значение в конфиге юзера
                 current_val = dev_config
                 try:
                     for key in path:
-                        # Если ключ - интерфейс, пробуем нормализовать (Fa0/0 -> FastEthernet0/0)
-                        # Но у нас в конфиге ключи уже полные, так что просто берем
                         current_val = current_val.get(key)
                         if current_val is None: break
                 except AttributeError:
@@ -845,14 +842,42 @@ class IOSCommandProcessor:
                 
                 val_str = str(current_val).strip() if current_val else ""
                 
-                # СРАВНЕНИЕ (IGNORE CASE)
                 if val_str.lower() != expected_value.lower():
-                    print(f"[CHECK FAIL] {dev_id} Path {path}: Got '{val_str}', Expected '{expected_value}'")
                     return False
 
-        # Если дошли сюда - всё верно
-        print(f"[CHECK SUCCESS] Lab completed by user {self.session.user}")
-        self.session.is_completed = True
-        self.session.save()
+        # === ЕСЛИ МЫ ТУТ, ЗНАЧИТ ВСЕ УСЛОВИЯ ВЫПОЛНЕНЫ ===
+        
+        # Если сессия УЖЕ была завершена ранее, не даем награду второй раз
+        if not self.session.is_completed:
+            print(f"[SUCCESS] Lab completed! Awarding user.")
+            
+            self.session.is_completed = True
+            self.session.save()
+            
+            # НАЧИСЛЕНИЕ НАГРАДЫ
+            try:
+                profile = self.session.user.profile
+                profile.money += self.lab.reward_money
+                profile.xp += self.lab.reward_xp
+                
+                # === ЛОГИКА LEVEL UP ===
+                # Простая формула: Новый уровень каждые 100 XP
+                # Например: 0-99 (Lvl 1), 100-199 (Lvl 2), etc.
+                
+                # Рассчитываем новый уровень на основе XP
+                new_level = 1 + (profile.xp // 100)
+                
+                if new_level > profile.level:
+                    print(f"LEVEL UP! {profile.level} -> {new_level}")
+                    profile.level = new_level
+                    # Можно добавить бонус денег за левел ап
+                    profile.money += 50 * new_level 
+                
+                profile.save()
+                
+            except Exception as e:
+                print(f"Error awarding profile: {e}")
+                
         return True
+
 

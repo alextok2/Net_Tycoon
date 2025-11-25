@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/game.css' %}">
+
+<div class="char-creator-container">
+    <form method="post" id="charForm">
+        {% csrf_token %}
+        <div class="creator-card">
+            <!-- Левая часть: Аватар -->
+            <div class="avatar-preview">
+                <svg width="200" height="300" viewBox="0 0 200 300" id="avatarSvg">
+                    <!-- Body -->
+                    <g id="bodyGroup">
+                        <path d="M50,200 Q50,150 100,150 T150,200 V300 H50 Z" fill="#3498db" id="shirtPath"/>
+                        <rect x="70" y="130" width="60" height="40" fill="#f5d0b0" id="neckPath"/>
+                    </g>
+                    <!-- Head -->
+                    <g id="headGroup">
+                        <circle cx="100" cy="100" r="50" fill="#f5d0b0" id="skinPath"/>
+                        <!-- Eyes -->
+                        <circle cx="80" cy="95" r="5" fill="#333"/>
+                        <circle cx="120" cy="95" r="5" fill="#333"/>
+                        <!-- Smile -->
+                        <path d="M80,120 Q100,135 120,120" stroke="#333" stroke-width="3" fill="none"/>
+                    </g>
+                    <!-- Hair (Simple Shapes) -->
+                    <g id="hairGroup" fill="#4a3b2a">
+                        <!-- Style 1: Short -->
+                        <path d="M50,100 Q50,40 100,40 T150,100 Q150,80 100,80 T50,100" class="hair-style style-1"/>
+                        <!-- Style 2: Spiky (Hidden by default) -->
+                        <path d="M50,90 L70,40 L90,80 L100,30 L120,80 L140,40 L150,90 Z" class="hair-style style-2" style="display:none"/>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Правая часть: Контролы -->
+            <div class="controls">
+                <h2>Создание IT специалиста</h2>
+                
+                <div class="control-group">
+                    <label>Название компании</label>
+                    {{ form.company_name }}
+                </div>
+
+                <div class="control-group">
+                    <label>Цвет кожи</label>
+                    <div class="color-picker">
+                        <div class="color-dot" style="background:#f5d0b0" onclick="setSkin('#f5d0b0')"></div>
+                        <div class="color-dot" style="background:#e0ac69" onclick="setSkin('#e0ac69')"></div>
+                        <div class="color-dot" style="background:#8d5524" onclick="setSkin('#8d5524')"></div>
+                    </div>
+                    <input type="hidden" name="skin_color" id="id_skin_color" value="#f5d0b0">
+                </div>
+
+                <!-- !!! НОВОЕ: ЦВЕТ ВОЛОС (Этого не хватало) !!! -->
+                <div class="control-group">
+                    <label>Цвет волос</label>
+                    <div class="color-picker">
+                        <div class="color-dot" style="background:#4a3b2a" onclick="setHair('#4a3b2a')"></div> <!-- Коричневый -->
+                        <div class="color-dot" style="background:#000000" onclick="setHair('#000000')"></div> <!-- Черный -->
+                        <div class="color-dot" style="background:#e6be8a" onclick="setHair('#e6be8a')"></div> <!-- Блонд -->
+                        <div class="color-dot" style="background:#a52a2a" onclick="setHair('#a52a2a')"></div> <!-- Рыжий -->
+                    </div>
+                    <!-- Обязательно hidden input с name="hair_color" -->
+                    <input type="hidden" name="hair_color" id="id_hair_color" value="#4a3b2a">
+                </div>
+
+                <div class="control-group">
+                    <label>Стиль одежды</label>
+                        <div class="color-picker">
+                        <div class="color-dot" style="background:#3498db" onclick="setShirt('#3498db')"></div>
+                        <div class="color-dot" style="background:#e74c3c" onclick="setShirt('#e74c3c')"></div>
+                        <div class="color-dot" style="background:#2ecc71" onclick="setShirt('#2ecc71')"></div>
+                        <div class="color-dot" style="background:#34495e" onclick="setShirt('#34495e')"></div>
+                    </div>
+                    <input type="hidden" name="shirt_color" id="id_shirt_color" value="#3498db">
+                </div>
+                
+                <div class="control-group">
+                    <label>Прическа</label>
+                    <button type="button" onclick="toggleHair()">Следующая</button>
+                    <input type="hidden" name="hair_style" id="id_hair_style" value="1">
+                </div>
+
+                <button type="submit" class="btn-start">Открыть офис</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    function setSkin(color) {
+        document.getElementById('skinPath').setAttribute('fill', color);
+        document.getElementById('neckPath').setAttribute('fill', color);
+        document.getElementById('id_skin_color').value = color;
+    }
+    
+    // !!! НОВАЯ ФУНКЦИЯ !!!
+    function setHair(color) {
+        // Меняем цвет всей группы волос в SVG
+        document.getElementById('hairGroup').setAttribute('fill', color);
+        // Обновляем скрытое поле для Django
+        document.getElementById('id_hair_color').value = color;
+    }
+
+    function setShirt(color) {
+        document.getElementById('shirtPath').setAttribute('fill', color);
+        document.getElementById('id_shirt_color').value = color;
+    }
+    function toggleHair() {
+        const style1 = document.querySelector('.style-1');
+        const style2 = document.querySelector('.style-2');
+        const input = document.getElementById('id_hair_style');
+        
+        if(style1.style.display === 'none') {
+            style1.style.display = 'block';
+            style2.style.display = 'none';
+            input.value = 1;
+        } else {
+            style1.style.display = 'none';
+            style2.style.display = 'block';
+            input.value = 2;
+        }
+    }
+</script>
+
+<!-- Стилизация поля ввода django -->
+<style>
+    #id_company_name { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; }
+</style>
+{% endblock %}

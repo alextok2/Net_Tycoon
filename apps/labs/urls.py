@@ -7,6 +7,7 @@ urlpatterns = [
     
     # Старт лабы
     path('start/<int:lab_id>/', views.start_lab, name='start_lab'),
+    path('accept/<int:lab_id>/', views.accept_task, name='accept_task'),
     
     # Рабочее пространство
     path('workspace/<int:session_id>/', views.lab_workspace, name='lab_workspace'),

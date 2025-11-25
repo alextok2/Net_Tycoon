@@ -6,9 +6,12 @@ class LabScenario(models.Model):
     description = models.TextField()
     topology_data = models.JSONField(default=dict)
     success_criteria = models.JSONField(default=dict)
+    allowed_devices = models.JSONField(default=list)
     
-    # !!! НОВОЕ: Список устройств, доступных для настройки (например: ["R1", "R2"])
-    allowed_devices = models.JSONField(default=list) 
+    
+    min_level = models.IntegerField(default=1) 
+    reward_money = models.IntegerField(default=100)
+    reward_xp = models.IntegerField(default=10)
 
     def __str__(self):
         return self.title

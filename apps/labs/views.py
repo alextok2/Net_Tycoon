@@ -254,3 +254,11 @@ def edit_lab(request, lab_id):
         'form': form, 
         'lab': lab
     })
+
+@login_required
+def accept_task(request, lab_id):
+    lab = get_object_or_404(LabScenario, id=lab_id)
+    # Создаем сессию (или получаем, если случайно нажали дважды)
+    UserLabSession.objects.get_or_create(user=request.user, lab=lab)
+    # Возвращаем в офис, где теперь появится предмет
+    return redirect('office')

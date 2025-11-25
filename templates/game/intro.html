@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div style="background: #000; height: 100vh; color: #0f0; font-family: monospace; padding: 50px; font-size: 1.5em;">
+    <div id="typewriter"></div>
+    <a href="{% url 'office' %}" id="nextBtn" style="display:none; color: white; margin-top: 30px; display: inline-block; border: 1px solid white; padding: 10px; text-decoration: none;">Начать работу >></a>
+</div>
+
+<script>
+    const text = "Загрузка системы...\nПодключение к серверу HR...\n\nПоздравляем! Вы приняты на должность Junior Network Engineer в компанию.\n\nВаше первое задание: Настроить локальную сеть в новом офисе. Сотрудники жалуются, что не могут отправить мемы котикам.\n\nУдачи.";
+    let i = 0;
+    const speed = 30;
+    
+    function typeWriter() {
+        if (i < text.length) {
+            document.getElementById("typewriter").innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+            i++;
+            setTimeout(typeWriter, speed);
+        } else {
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+    }
+    window.onload = typeWriter;
+</script>
+{% endblock %}

@@ -21,6 +21,11 @@
             <a href="{% url 'lab_list' %}" style="text-decoration:none; color:#333;">&larr; Back</a>
             <a href="{% url 'reset_lab' session.id %}" class="btn-reset" onclick="return confirm('Reset Device?');">Reset ↻</a>
         </div>
+        <div style="padding: 10px;">
+            <a href="{% url 'office' %}" style="display:block; text-align:center; background:#555; color:white; padding:10px; text-decoration:none; border-radius:5px;">
+                🏢 Вернуться в Офис
+            </a>
+        </div>
 
         <div class="topology-view">
             <!-- СТАТУС С ПРОВЕРКОЙ -->

@@ -1,0 +1,291 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Подключаем CSS -->
+<link rel="stylesheet" href="{% static 'css/office.css' %}">
+
+<div class="office-container">
+    <!-- HUD -->
+    <div class="ui-hud">
+        <div class="hud-panel">📅 День {{ profile.day }}</div>
+        <div class="hud-panel">🏢 {{ profile.company_name }}</div>
+        <div class="hud-panel" style="color:#27ae60">💰 ${{ profile.money }}</div>
+    </div>
+
+    <div class="room">
+        
+        <!-- 1. SERVER RACK -->
+        <div class="iso-object" style="top: 150px; left: 150px; z-index: 10;">
+             <svg width="140" height="220" viewBox="0 0 140 220">
+                <ellipse cx="70" cy="200" rx="50" ry="15" fill="rgba(0,0,0,0.2)"/>
+                <path d="M70,190 L120,160 L120,40 L70,70 Z" fill="#2c3e50"/>
+                <path d="M20,160 L70,190 L70,70 L20,40 Z" fill="#34495e"/>
+                <path d="M20,40 L70,70 L120,40 L70,10 Z" fill="#5d6d7e"/>
+                <rect x="30" y="60" width="5" height="5" fill="#e74c3c" class="blink" style="transform: skewY(30deg)"/>
+                <rect x="30" y="70" width="5" height="5" fill="#2ecc71" class="blink" style="transform: skewY(30deg); animation-delay: 0.5s"/>
+                <path d="M35,55 L60,70 L60,170 L35,155 Z" fill="rgba(0,0,0,0.3)"/>
+             </svg>
+        </div>
+
+        <!-- 2. CHARACTER (Сидит) -->
+        <div class="iso-object" style="top: 360px; left: 560px; z-index: 19; pointer-events: none;">
+            <svg width="100" height="140" viewBox="0 0 200 300">
+                <!-- Стул -->
+                <path d="M40,150 L160,150 L160,50 L40,50 Z" fill="#333"/>
+                <path d="M40,150 L40,250 L50,250 L50,150 Z" fill="#111"/>
+                
+                <!-- Тело -->
+                <g transform="translate(0, 20)">
+                     <path d="M50,220 Q50,150 100,150 T150,220 V260 H50 Z" fill="{{ profile.shirt_color }}"/>
+                     <rect x="70" y="130" width="60" height="40" fill="{{ profile.skin_color }}"/>
+                     <circle cx="100" cy="100" r="50" fill="{{ profile.skin_color }}"/>
+                     <circle cx="80" cy="95" r="5" fill="#333"/>
+                     <circle cx="120" cy="95" r="5" fill="#333"/>
+                     <path d="M85,120 Q100,130 115,120" stroke="#333" stroke-width="3" fill="none"/>
+                     {% if profile.hair_style == 1 %}
+                        <path d="M50,100 Q50,40 100,40 T150,100 Q150,80 100,80 T50,100" fill="{{ profile.hair_color }}"/>
+                     {% else %}
+                        <path d="M50,90 L70,40 L90,80 L100,30 L120,80 L140,40 L150,90 Z" fill="{{ profile.hair_color }}"/>
+                     {% endif %}
+                </g>
+            </svg>
+        </div>
+
+        <!-- 3. WORKSTATION (Компьютер) - КЛИКАБЕЛЬНЫЙ -->
+        <div class="iso-object" 
+             style="top: 380px; left: 500px; z-index: 20;"
+             onclick="openTaskBoard()"> 
+            
+            {% if labs %}
+                <div class="bubble">NEW EMAIL ({{ labs.count }})</div>
+            {% endif %}
+
+            <svg width="220" height="180" viewBox="0 0 220 180">
+                <path d="M10,110 L110,170 L210,110 L110,50 Z" fill="rgba(0,0,0,0.15)"/>
+                <rect x="20" y="90" width="10" height="60" fill="#555"/>
+                <rect x="190" y="90" width="10" height="60" fill="#555"/>
+                <rect x="105" y="120" width="10" height="60" fill="#444"/>
+                <path d="M10,90 L110,150 L110,160 L10,100 Z" fill="#8e44ad" filter="brightness(0.7)"/>
+                <path d="M110,150 L210,90 L210,100 L110,160 Z" fill="#8e44ad" filter="brightness(0.5)"/>
+                <path d="M10,90 L110,30 L210,90 L110,150 Z" fill="#9b59b6"/>
+                <g transform="translate(110, 50)">
+                    <path d="M0,0 L40,20 L40,50 L0,30 Z" fill="#333"/>
+                    <path d="M-40,20 L0,40 L0,0 L-40,-20 Z" fill="#222"/>
+                    <path d="M-40,20 L0,40 L0,70 L-40,50 Z" fill="#111"/>
+                    <path d="M-35,25 L-5,40 L-5,65 L-35,50 Z" fill="#3498db"/>
+                </g>
+                <path d="M90,110 L130,130 L140,125 L100,105 Z" fill="#ddd"/>
+            </svg>
+        </div>
+
+        <!-- 4. ЦВЕТОК -->
+        <div class="iso-object" style="top: 400px; left: 200px; z-index: 25;">
+            <svg width="80" height="120" viewBox="0 0 80 120">
+                <ellipse cx="40" cy="100" rx="30" ry="10" fill="rgba(0,0,0,0.2)"/>
+                <path d="M20,80 L60,80 L55,110 L25,110 Z" fill="#d35400"/>
+                <ellipse cx="40" cy="80" rx="20" ry="5" fill="#e67e22"/>
+                <path d="M40,80 Q20,50 10,30" stroke="#27ae60" stroke-width="3" fill="none"/>
+                <path d="M40,80 Q60,50 70,40" stroke="#27ae60" stroke-width="3" fill="none"/>
+                <circle cx="10" cy="30" r="8" fill="#2ecc71"/>
+                <circle cx="70" cy="40" r="10" fill="#2ecc71"/>
+                <circle cx="40" cy="20" r="12" fill="#27ae60"/>
+                <line x1="40" y1="80" x2="40" y2="30" stroke="#27ae60" stroke-width="3"/>
+            </svg>
+        </div>
+        
+        <!-- 4. КВЕСТОВЫЙ ПРЕДМЕТ (СВИТЧ) - ПОЯВЛЯЕТСЯ ТОЛЬКО ЕСЛИ ЕСТЬ ЗАДАНИЕ -->
+        {% if active_session %}
+            <div class="iso-object" style="top: 450px; left: 300px; z-index: 25;" onclick="openWorkbench()">
+                <div class="bubble" style="background: orange; border-color: orange;">FIX ME!</div>
+                
+                <!-- SVG КОРОБКИ С ОБОРУДОВАНИЕМ -->
+                <svg width="100" height="80" viewBox="0 0 100 80">
+                     <path d="M10,30 L50,50 L90,30 L50,10 Z" fill="#d35400"/> <!-- Верх -->
+                     <path d="M10,30 L50,50 L50,70 L10,50 Z" fill="#a04000"/> <!-- Лево -->
+                     <path d="M90,30 L50,50 L50,70 L90,50 Z" fill="#ba4a00"/> <!-- Право -->
+                     <text x="35" y="45" font-size="10" fill="white" style="transform: rotate(-10deg)">CISCO</text>
+                </svg>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО ЗАДАЧ -->
+<div id="taskModal" class="modal-overlay" onclick="closeTaskBoard(event)">
+    <div class="task-window">
+        <div class="window-header">
+            <span>📧 Входящие сообщения (Jobs)</span>
+            <span class="close-btn">✕</span>
+        </div>
+        <div class="window-body">
+            {% for lab in labs %}
+            <div class="task-item">
+                <div class="task-header">
+                    <div class="task-title">{{ lab.title }}</div>
+                    <div class="badges">
+                        <!-- Парсим заказчика из описания или хардкодим пока "Boss" -->
+                        <span class="badge badge-client">CLIENT: BOSS</span>
+                        <span class="badge badge-level">REQ: LVL {{ lab.min_level }}</span>
+                    </div>
+                </div>
+                
+                <div class="task-desc">
+                    {{ lab.description|striptags|truncatewords:30 }}
+                </div>
+
+                <div class="task-footer">
+                    <span class="money-reward">${{ lab.reward_money }}</span>
+                    <!-- Если это задание с кабелями, вызываем Workbench, иначе сразу Лабу -->
+                    {% if "коммутатор" in lab.title|lower %}
+                         <button class="btn-accept" onclick="openWorkbench({{ lab.id }})">Диагностика</button>
+                    {% else %}
+                         <a href="{% url 'start_lab' lab.id %}" class="btn-accept">Принять</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО ВЕРСТАКА (СБОРКА) -->
+<div id="workbenchModal" class="modal-overlay">
+    <div class="task-window" style="width: 800px; background: #2c3e50;">
+        <div class="window-header" style="background: #222;">
+            <span>🔧 Верстак: Диагностика устройства</span>
+            <span class="close-btn" onclick="closeWorkbench()">✕</span>
+        </div>
+        
+        <div class="workbench-area" style="position:relative; height: 500px; background: #34495e; overflow: hidden;">
+            
+            <!-- СТАТУС -->
+            <div id="wb-status" style="position:absolute; top:10px; left:10px; color:white; font-family:monospace;">
+                STATUS: POWER OFF | CONSOLE: DISCONNECTED
+            </div>
+
+            <!-- 1. КОММУТАТОР (ЗАДНЯЯ ПАНЕЛЬ) -->
+            <svg width="600" height="150" viewBox="0 0 600 150" style="position:absolute; top: 150px; left: 100px;">
+                <!-- Корпус -->
+                <rect x="0" y="0" width="600" height="150" rx="5" fill="#95a5a6" stroke="#7f8c8d" stroke-width="4"/>
+                
+                <!-- Вентилятор -->
+                <circle cx="50" cy="75" r="30" fill="#333"/>
+                <g id="fan" style="transform-origin: 50px 75px;">
+                     <rect x="45" y="45" width="10" height="60" fill="#555"/>
+                     <rect x="20" y="70" width="60" height="10" fill="#555"/>
+                </g>
+
+                <!-- Гнездо Питания -->
+                <rect x="500" y="50" width="60" height="50" fill="black" id="power-port"/>
+                <circle cx="515" cy="75" r="3" fill="gold"/>
+                <circle cx="545" cy="75" r="3" fill="gold"/>
+
+                <!-- Гнездо Console (RJ45) -->
+                <rect x="150" y="80" width="40" height="30" fill="black" stroke="#ccc" id="console-port"/>
+                <text x="150" y="70" font-size="12" fill="#333" font-weight="bold">CONSOLE</text>
+
+                <!-- Светодиоды портов (спереди, но мы видим их отблеск или просто статус) -->
+                <circle cx="580" cy="20" r="5" fill="#333" id="led-pwr"/>
+            </svg>
+
+            <!-- 2. КАБЕЛЬ ПИТАНИЯ (Свободный) -->
+            <div id="cable-power" onclick="connectPower()" style="position:absolute; bottom: 20px; left: 500px; cursor:pointer; transition: all 0.5s;">
+                <svg width="40" height="200" viewBox="0 0 40 200">
+                    <path d="M20,0 L20,200" stroke="black" stroke-width="10"/>
+                    <rect x="5" y="0" width="30" height="40" fill="#111"/> <!-- Штекер -->
+                </svg>
+                <div style="text-align:center; color:white; font-size:12px;">220V</div>
+            </div>
+
+            <!-- 3. КОНСОЛЬНЫЙ КАБЕЛЬ (Свободный) -->
+            <div id="cable-console" onclick="connectConsole()" style="position:absolute; bottom: 20px; left: 200px; cursor:pointer; transition: all 0.5s;">
+                <svg width="40" height="200" viewBox="0 0 40 200">
+                    <path d="M20,0 Q20,100 50,200" stroke="#3498db" stroke-width="6" fill="none"/>
+                    <rect x="10" y="0" width="20" height="30" fill="transparent" stroke="#3498db"/> <!-- Штекер -->
+                    <rect x="12" y="0" width="16" height="20" fill="#ecf0f1"/> 
+                </svg>
+                <div style="text-align:center; color:#3498db; font-size:12px;">CONSOLE</div>
+            </div>
+
+            <!-- КНОПКА ЗАПУСКА ТЕРМИНАЛА (Появится когда все готово) -->
+            <a id="btn-start-terminal" href="#" class="btn-accept" 
+               style="position:absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display:none; padding: 20px 40px; font-size: 20px; box-shadow: 0 0 20px #2ecc71;">
+               💻 Открыть Терминал
+            </a>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentLabId = 0;
+    let powerOn = false;
+    let consoleOn = false;
+
+    function openWorkbench(labId) {
+        currentLabId = labId;
+        document.getElementById('taskModal').style.display = 'none'; // Скрыть задачи
+        document.getElementById('workbenchModal').style.display = 'flex'; // Показать верстак
+        
+        // Сброс состояния
+        powerOn = false; consoleOn = false;
+        document.getElementById('led-pwr').setAttribute('fill', '#333');
+        document.getElementById('btn-start-terminal').style.display = 'none';
+        
+        // Возвращаем кабели на место (CSS сброс)
+        document.getElementById('cable-power').style.transform = 'translate(0, 0)';
+        document.getElementById('cable-console').style.transform = 'translate(0, 0)';
+        document.getElementById('wb-status').textContent = "STATUS: POWER OFF | CONSOLE: DISCONNECTED";
+    }
+
+    function closeWorkbench() {
+        document.getElementById('workbenchModal').style.display = 'none';
+    }
+
+    function connectPower() {
+        if(powerOn) return;
+        // Анимация кабеля
+        const cable = document.getElementById('cable-power');
+        cable.style.transform = 'translate(0, -250px)'; // Двигаем вверх к порту
+        
+        setTimeout(() => {
+            powerOn = true;
+            document.getElementById('led-pwr').setAttribute('fill', '#2ecc71'); // Зеленая лампочка
+            document.getElementById('wb-status').textContent = "STATUS: POWER ON | CONSOLE: " + (consoleOn ? "CONNECTED" : "DISCONNECTED");
+            
+            // Включаем вентилятор (CSS Animation)
+            document.getElementById('fan').style.animation = "spin 0.5s linear infinite";
+            checkReady();
+        }, 500);
+    }
+
+    function connectConsole() {
+        if(consoleOn) return;
+        const cable = document.getElementById('cable-console');
+        // Двигаем чуть влево и вверх к порту (координаты подобраны на глаз относительно position)
+        cable.style.transform = 'translate(-40px, -270px)'; 
+        
+        setTimeout(() => {
+            consoleOn = true;
+            document.getElementById('wb-status').textContent = "STATUS: " + (powerOn ? "POWER ON" : "POWER OFF") + " | CONSOLE: CONNECTED";
+            checkReady();
+        }, 500);
+    }
+
+    function checkReady() {
+        if (powerOn && consoleOn) {
+            const btn = document.getElementById('btn-start-terminal');
+            // Формируем ссылку на лабу
+            btn.href = "/lab/start/" + currentLabId + "/"; 
+            btn.style.display = 'block';
+        }
+    }
+</script>
+<style>
+    @keyframes spin { 100% { transform: rotate(360deg); transform-origin: 50px 75px; } }
+</style>
+
+<!-- Подключаем JS -->
+<script src="{% static 'js/office.js' %}"></script>
+{% endblock %}

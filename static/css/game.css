@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+
+body {
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    color: #333;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- Character Creator --- */
+.char-creator-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: radial-gradient(circle, #ffecd2 0%, #fcb69f 100%);
+}
+
+.creator-card {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    display: flex;
+    gap: 40px;
+    width: 700px;
+}
+
+.avatar-preview {
+    width: 300px;
+    height: 350px;
+    background: #f0f4f8;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    overflow: hidden;
+    border: 2px solid #e1e1e1;
+}
+
+.controls {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.control-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
+.color-picker { display: flex; gap: 10px; }
+.color-dot { 
+    width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.2s; 
+}
+.color-dot:hover { transform: scale(1.2); }
+.color-dot.active { border-color: #333; }
+
+.btn-start {
+    background: #ff6b6b; color: white; border: none; padding: 15px; font-size: 1.2em; border-radius: 10px; cursor: pointer; margin-top: 20px; font-weight: bold; box-shadow: 0 4px 0 #d64545; transition: transform 0.1s;
+}
+.btn-start:active { transform: translateY(4px); box-shadow: none; }
+
+/* --- Office Isometric View --- */
+/* --- Office Tycoon Style (Fake 2.5D) --- */
+.office-container {
+    height: 100vh;
+    width: 100vw;
+    background: #2c3e50; /* Темный фон вокруг комнаты */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Комната - теперь просто плоский квадрат с узором */
+.room {
+    width: 1000px;
+    height: 800px;
+    position: relative;
+    
+    /* УБРАЛИ ГРАДИЕНТЫ-КУБЫ */
+    background-color: #bdc3c7; /* Цвет пола (серый ковролин) */
+    border: 20px solid #34495e;
+    border-radius: 10px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+}
+
+.ui-hud {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 20px; display: flex; justify-content: space-between; pointer-events: none;
+}
+.hud-panel {
+    background: white; padding: 8px 15px; border-radius: 8px; 
+    font-weight: bold; box-shadow: 0 4px 0 rgba(0,0,0,0.1); border: 2px solid #333;
+    pointer-events: auto;
+}
+
+/* Объекты */
+.iso-object {
+    position: absolute;
+    cursor: pointer;
+    transition: transform 0.1s;
+    /* Важно: объекты сортируются по z-index в зависимости от их "top" координаты */
+}
+.iso-object:hover {
+    transform: translateY(-5px);
+    filter: brightness(1.1);
+}
+
+.bubble {
+    position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
+    background: #e74c3c; color: white; padding: 5px 10px; border-radius: 15px;
+    font-size: 12px; font-weight: bold; border: 2px solid white;
+    animation: bounce 1s infinite; z-index: 10; white-space: nowrap;
+}
+@keyframes bounce { 0%, 100% { top: -50px; } 50% { top: -60px; } }
+
+/* --- Task Modal (Window) --- */
+.modal-overlay {
+    display: none; /* Скрыто по умолчанию */
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); z-index: 1000;
+    justify-content: center; align-items: center;
+}
+
+.task-window {
+    width: 600px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    font-family: 'Courier New', monospace; /* Стиль терминала/почты */
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.window-header {
+    background: #34495e; color: white; padding: 10px 15px;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.close-btn { cursor: pointer; font-weight: bold; color: #ff6b6b; }
+
+.window-body { padding: 0; max-height: 400px; overflow-y: auto; }
+
+.task-item {
+    padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;
+}
+.task-item:hover { background: #f9f9f9; }
+
+.task-info h4 { margin: 0 0 5px 0; color: #2c3e50; }
+.task-info p { margin: 0; font-size: 12px; color: #7f8c8d; }
+.task-reward { font-weight: bold; color: #27ae60; margin-right: 15px; }
+
+.btn-accept {
+    padding: 8px 15px; background: #3498db; color: white; text-decoration: none; border-radius: 4px; font-size: 12px;
+}
+.btn-accept:hover { background: #2980b9; }
